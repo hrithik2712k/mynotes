@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "190125080236",
+    "project_id": "selfnotes-projects-flutter",
+    "storage_bucket": "selfnotes-projects-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:190125080236:android:868b80efd971d67034e909",
+        "android_client_info": {
+          "package_name": "com.learningFlutter.mynotes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6603KYL6UMtkQEXklzCwxmpT8UW7Gf3Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
