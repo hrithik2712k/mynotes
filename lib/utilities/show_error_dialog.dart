@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<void> showErroDialog(
+Future<void> showErrorDialog(
   BuildContext context,
   String text,
 ) {

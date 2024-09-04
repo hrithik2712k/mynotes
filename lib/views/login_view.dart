@@ -59,38 +59,53 @@ class _LoginViewState extends State<LoginView> {
             onPressed: () async {
               final email = _email.text;
               final password = _password.text;
+
+              // Attempt to sign in with email and password
               try {
                 await FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: email, password: password);
+                  email: email,
+                  password: password,
+                );
+
+                // Ensure the widget is still mounted before navigating
+                if (!mounted) return;
+
                 Navigator.of(context).pushNamedAndRemoveUntil(
                   notesRoute,
                   (route) => false,
                 );
               } on FirebaseAuthException catch (e) {
-                if (e.code == 'invalid-credential') {
-                  await showErroDialog(
-                    context,
-                    'Invalid Credentials',
-                  );
-                } else if (e.code == 'wrong password') {
-                  await showErroDialog(
-                    context,
-                    'Wrong password',
-                  );
-                } else {
-                  await showErroDialog(
-                    context,
-                    'Error: ${e.code}',
-                  );
+                // Handling FirebaseAuth exceptions
+                String errorMessage;
+
+                switch (e.code) {
+                  case 'invalid-credential':
+                    errorMessage = 'Invalid Credentials';
+                    break;
+                  case 'wrong-password': // Corrected error code
+                    errorMessage = 'Wrong password';
+                    break;
+                  case 'user-not-found': // Additional common error case
+                    errorMessage = 'User not found';
+                    break;
+                  default:
+                    errorMessage =
+                        'Error: ${e.message}'; // More descriptive error message
+                }
+
+                // Check if context is mounted before showing a dialog
+                if (mounted) {
+                  await showErrorDialog(context, errorMessage);
                 }
               } catch (e) {
-                await showErroDialog(
-                  context,
-                  e.toString(),
-                );
+                // Handling any other exceptions
+                if (mounted) {
+                  await showErrorDialog(
+                      context, 'An unexpected error occurred: ${e.toString()}');
+                }
               }
             },
-            child: const Text('Login'),
+            child: const Text('Log in'),
           ),
           TextButton(
               onPressed: () {
