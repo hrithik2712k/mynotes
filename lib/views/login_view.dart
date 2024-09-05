@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as devtools show log;
 
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utilities/show_error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -62,12 +63,12 @@ class _LoginViewState extends State<LoginView> {
 
               // Attempt to sign in with email and password
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(
+                await AuthService.firebase().logIn(
                   email: email,
                   password: password,
                 );
-                final user = FirebaseAuth.instance.currentUser;
-                if (user?.emailVerified ?? false) {
+                final user = AuthService.firebase().currentUser;
+                if (user?.isEmailVerified ?? false) {
                   Navigator.of(context).pushNamedAndRemoveUntil(
                     notesRoute,
                     (route) => false,
@@ -78,35 +79,21 @@ class _LoginViewState extends State<LoginView> {
                 }
                 // Ensure the widget is still mounted before navigating
                 // if (!mounted) return;
-              } on FirebaseAuthException catch (e) {
-                // Handling FirebaseAuth exceptions
-                String errorMessage;
-
-                switch (e.code) {
-                  case 'invalid-credential':
-                    errorMessage = 'Invalid Credentials';
-                    break;
-                  case 'wrong-password': // Corrected error code
-                    errorMessage = 'Wrong password';
-                    break;
-                  case 'user-not-found': // Additional common error case
-                    errorMessage = 'User not found';
-                    break;
-                  default:
-                    errorMessage =
-                        'Error: ${e.message}'; // More descriptive error message
-                }
-
-                // Check if context is mounted before showing a dialog
-                if (mounted) {
-                  await showErrorDialog(context, errorMessage);
-                }
-              } catch (e) {
-                // Handling any other exceptions
-                if (mounted) {
-                  await showErrorDialog(
-                      context, 'An unexpected error occurred: ${e.toString()}');
-                }
+              } on UserNotFoundAuthException {
+                await showErrorDialog(
+                  context,
+                  "user not found",
+                );
+              } on WrongPassworAuthException {
+                await showErrorDialog(
+                  context,
+                  "Wrong Credentials",
+                );
+              } on GenericAuthException {
+                await showErrorDialog(
+                  context,
+                  "Authentication Error",
+                );
               }
             },
             child: const Text('Log in'),
