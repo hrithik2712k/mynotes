@@ -79,15 +79,15 @@ class _LoginViewState extends State<LoginView> {
                 }
                 // Ensure the widget is still mounted before navigating
                 // if (!mounted) return;
-              } on UserNotFoundAuthException {
+              } on InvalidEmailAuthException {
                 await showErrorDialog(
                   context,
-                  "user not found",
+                  "Invalid Email",
                 );
-              } on WrongPassworAuthException {
+              } on WrongPasswordAuthException {
                 await showErrorDialog(
                   context,
-                  "Wrong Credentials",
+                  "Wrong Password",
                 );
               } on GenericAuthException {
                 await showErrorDialog(
