@@ -44,6 +44,7 @@ class NotesServices {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
+    // make sure note exists
     await getNote(id: note.id);
 
     final updatesCount = await db.update(notesTable, {
@@ -109,6 +110,7 @@ class NotesServices {
       where: 'id = ?',
       whereArgs: [id],
     );
+    // above where: 'id=?' this means that the value of whereArgs id will be substituted..
 
     // ignore: unrelated_type_equality_checks
     if (deletedCount != 1) {
@@ -123,6 +125,7 @@ class NotesServices {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
 
+    // make sure owner exists in the database with the correct id.
     final dbUser = await getUser(email: owner.email);
 
     if (dbUser != owner) {
@@ -270,6 +273,7 @@ class DatabaseUser {
       : id = map[idColumn] as int,
         email = map[emailColumn] as String;
 
+  // toString is used here for informative output i.e. giving the values not instance of class.
   @override
   String toString() => 'Person, ID = $id, email = $email';
 
@@ -320,14 +324,14 @@ const userIdColumn = 'user_id';
 const textColumn = 'text';
 const isSyncedWithCloudColumn = 'is_synced_with_cloud';
 const createUserTable = '''
-      CREATE TABLE IF NOT EXITS "user" (
+      CREATE TABLE IF NOT EXISTS "user" (
 	    "id"	INTEGER NOT NULL,
 	    "email"	TEXT NOT NULL UNIQUE,
 	    PRIMARY KEY("id" AUTOINCREMENT)
     );
       ''';
 const createNoteTable = '''
-      CREATE TABLE "note" (
+      CREATE TABLE IF NOT EXISTS"note" (
 	    "id"	INTEGER NOT NULL,
 	    "user_id"	INTEGER NOT NULL,
 	    "text"	TEXT,
