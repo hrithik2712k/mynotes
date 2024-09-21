@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/enums/menu_action.dart';
@@ -76,6 +75,7 @@ class _NotesViewState extends State<NotesView> {
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
                         case ConnectionState.waiting:
+                        case ConnectionState.active:
                           return const Text("waiting for all notes");
                         default:
                           return const CircularProgressIndicator();
